@@ -1,12 +1,13 @@
 #define trigPin 13
 #define echoPin 12
 
-#include <Servo.h>
+#include <ESP32Servo.h>
 
-#define SERVO_PIN 11
+#define SERVO_PIN 18
 
 Servo s;
 
+// Função para medir a distância usando o sensor ultrassônico
 long measureDistance() {
   long duration, distance;
 
@@ -17,34 +18,36 @@ long measureDistance() {
   digitalWrite(trigPin, LOW);
 
   duration = pulseIn(echoPin, HIGH);
-
   distance = duration / 58; // Conversão para cm
   return distance;
 }
 
-void controlContinuousServo() {
-  int distance = measureDistance();
-
-  if (distance > 5){
-    s.write(90); 
-  }
-
-  if (distance <= 5) { 
-    // Para o servo (posição neutra)
-    s.write(90); 
-    delay(1500); 
+// Função para controlar o servo contínuo com base na distância
+void controlContinuousServo(int distance) {
+  if (distance <= 5) {
+    Serial.println("Distância < 5 cm: Movendo o servo...");
     
-    // Gira para a esquerda (valor menor que 90)
-    s.write(89); // Ajuste conforme necessário
+    // Gira levemente para a direita
+    s.write(70); // Valor menor que 90 para girar à direita
+    delay(650);
+    // Ele para de rodar
+    s.write(90);
+    delay(2000);
+    // Gira levemente para a esquerda
+    s.write(110); // Valor maior que 90 para girar à esquerda
+    delay(1500);
+        // Ele para de rodar
+    s.write(90);
+    delay(2000);
+    // Gira levemente para a direita para a posicao inicial
+    s.write(70); // Valor menor que 90 para girar à direita
+    delay(500);
+    // Para o servo
+    s.write(90);
     delay(1000);
-    
-    // Gira para a direita (valor maior que 90)
-    s.write(91); // Ajuste conforme necessário
-    delay(1000);
-    
-    // Para o servo novamente
-    s.write(90); 
-    delay(1000);
+  } else {
+    Serial.println("Distância > 5 cm: Servo parado.");
+    s.write(90); // Servo parado
   }
 }
 
@@ -55,10 +58,16 @@ void setup() {
 
   s.attach(SERVO_PIN);
   s.write(90); // Inicializa o servo parado
+
+  Serial.println("Sistema iniciado!"); // Mensagem inicial no monitor serial
 }
 
 void loop() {
-  Serial.println(measureDistance());
-  controlContinuousServo();
-  delay(500);
+  int distance = measureDistance(); // Medir a distância
+  Serial.print("Distância medida: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  controlContinuousServo(distance); // Controlar o servo com base na distância
+  delay(500); // Intervalo entre as medições
 }
