@@ -72,6 +72,10 @@ void setup() {
 }
 
 void loop() {
+
+  Serial.println("Hello Boss");
+  delay(1500);
+
   int distance = measureDistance(); // Medir a distância
   Serial.print("Distância medida: ");
   Serial.print(distance);

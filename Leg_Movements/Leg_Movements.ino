@@ -1,5 +1,8 @@
 #include <Servo.h>
 
+  #define RXp2 16
+  #define TXp2 17
+
 Servo servo[4][3];
 
 // Define servos' ports
@@ -12,6 +15,16 @@ const int step_forward_position[3] = {110, 70, 110}; // Leg moves forward
 
 void setup()
 {
+
+  // this sample code provided by www.programmingboss.com
+  // put your setup code here, to run once:
+
+  Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1, RXp2, TXp2);
+
+  
+
+
   // Initialize all servos
   for (int i = 0; i < 4; i++)
   {
@@ -62,7 +75,14 @@ void walkCycle()
   moveLeg(3, neutral_position, 300);
 }
 
+
 void loop()
 {
+  
+  Serial.println("Message Received: ");
+  Serial.println(Serial2.readString());
+
+  delay(1000);
+
   walkCycle();
 }

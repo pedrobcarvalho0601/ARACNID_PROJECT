@@ -1,5 +1,17 @@
 #include <Servo.h>
 
+//recetor de sinais
+// this sample code provided by www.programmingboss.com
+void setup() {
+
+  Serial.begin(9600);
+
+}
+void loop() {
+
+
+//--------------------------------------------------------------------------------//
+
 Servo servo[4][3];
 const int servoPin[4][3] = { {2, 3, 4}, {5, 6, 7}, {8, 9, 10}, {11, 12, 13} };
 const int neutral_position[3] = {90, 90, 90}; // Neutral angles for all servos
@@ -135,6 +147,7 @@ void loop() {
     pathR = false;
     pathL = false;
   }
+
 
 <<<<<<<< HEAD:Sketch__1_/Sketch__1_.ino
 }
