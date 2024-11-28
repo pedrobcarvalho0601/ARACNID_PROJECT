@@ -7,6 +7,8 @@
 
 Servo s;
 
+float distanceD, distanceE, distanceB;
+
 // Função para medir a distância usando o sensor ultrassônico
 long measureDistance() {
   long duration, distance;
@@ -29,22 +31,29 @@ void controlContinuousServo(int distance) {
     
     // Gira levemente para a direita
     s.write(70); // Valor menor que 90 para girar à direita
-    delay(650);
+    delay(600);
     // Ele para de rodar
     s.write(90);
     delay(2000);
+    distanceD = measureDistance();
+    Serial.print("Distância direita = "); Serial.println(distanceD);
+
     // Gira levemente para a esquerda
     s.write(110); // Valor maior que 90 para girar à esquerda
-    delay(1500);
+    delay(1460);
         // Ele para de rodar
     s.write(90);
     delay(2000);
+    distanceE = measureDistance();
+    Serial.print("Distância esquerda = "); Serial.println(distanceE);
+
     // Gira levemente para a direita para a posicao inicial
     s.write(70); // Valor menor que 90 para girar à direita
-    delay(500);
+    delay(660);
     // Para o servo
     s.write(90);
     delay(1000);
+
   } else {
     Serial.println("Distância > 5 cm: Servo parado.");
     s.write(90); // Servo parado
@@ -71,3 +80,4 @@ void loop() {
   controlContinuousServo(distance); // Controlar o servo com base na distância
   delay(500); // Intervalo entre as medições
 }
+
