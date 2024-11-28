@@ -60,6 +60,7 @@ void moveLeg(int leg, const int positions[3], int delay_time)
 }
 
 void moveForward(){
+  /*
   // Step 1: Lift and move Leg 0 and Leg 2 forward
   int leg_up[] = {step_up_position[0], step_up_position[1], step_up_position[2]};
   int leg_forward[] = {step_forward_position[0], step_forward_position[1], step_forward_position[2]};
@@ -82,18 +83,17 @@ void moveForward(){
   // Step 4: Return Leg 1 and Leg 3 to neutral
   moveLeg(1, neutral_position, 300);
   moveLeg(3, neutral_position, 300);
+  */
 }
 
 void moveBackwards(){
   //the robot moves backwards normally
 }
 void spinLeft(){
-  //the robot looks to the left and then moves forwards
-  moveForward();
+  //the robot looks to the left
 }
 void spinRight(){
-  //the robot looks to the right and then moves forwards
-  moveForward();
+  //the robot looks to the right
 }
 void setup() {
   //pins from 2 to 13 are for servos
@@ -118,8 +118,9 @@ void loop() {
 
   distance = measureDistance();
 
-  if (distance < 5)
-  {
+  moveForward();
+
+  if (distance <= 5){
     lookingForPath();
   }
 
@@ -129,12 +130,10 @@ void loop() {
     pathL = false;
   }
 
-  if (pathR){
+  if (pathL){
     spinLeft();
     pathR = false;
     pathL = false;
   }
+
 }
-
-
-
