@@ -3,7 +3,7 @@
 
 #include <ESP32Servo.h>
 
-#define SERVO_PIN 18
+#define SERVO_PIN 14
 
 Servo s;
 
@@ -40,20 +40,39 @@ void controlContinuousServo(int distance) {
 
     // Gira levemente para a esquerda
     s.write(110); // Valor maior que 90 para girar à esquerda
-    delay(1460);
-        // Ele para de rodar
+    delay(1350);
+    // Ele para de rodar
     s.write(90);
     delay(2000);
     distanceE = measureDistance();
     Serial.print("Distância esquerda = "); Serial.println(distanceE);
 
-    // Gira levemente para a direita para a posicao inicial
+//180º 
+    if(distanceD+3 > distanceE && distanceD-3 < distanceE || distanceE+3 > distanceD && distanceE-3 < distanceD){
+          // Gira levemente para a esquerda
+    s.write(110); // Valor maior que 90 para girar à esquerda
+    delay(700);
+    // Ele para de rodar
+    s.write(90);
+    delay(2000);
+    distanceB = measureDistance();
+    Serial.print("Distância de trás = "); Serial.println(distanceB);
+
+        // Gira levemente para a direita para a posicao inicial
     s.write(70); // Valor menor que 90 para girar à direita
-    delay(660);
+    delay(1150);
     // Para o servo
     s.write(90);
     delay(1000);
 
+    }else{
+    // Gira levemente para a direita para a posicao inicial
+    s.write(70); // Valor menor que 90 para girar à direita
+    delay(620);
+    // Para o servo
+    s.write(90);
+    delay(1000);
+    }
   } else {
     Serial.println("Distância > 5 cm: Servo parado.");
     s.write(90); // Servo parado
@@ -68,13 +87,9 @@ void setup() {
   s.attach(SERVO_PIN);
   s.write(90); // Inicializa o servo parado
 
-  Serial.println("Sistema iniciado!"); // Mensagem inicial no monitor serial
 }
 
 void loop() {
-
-  Serial.println("Hello Boss");
-  delay(1500);
 
   int distance = measureDistance(); // Medir a distância
   Serial.print("Distância medida: ");
