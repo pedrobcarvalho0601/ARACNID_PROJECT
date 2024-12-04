@@ -122,6 +122,7 @@ void stand_up_without_for() {
   delay(500);
   ServoFLL.write(105);
   delay(800);
+  
   // Move the Tibia servo from 90 to 0 - BLT FRT
   ServoBLT.write(0);
   delay(500);
