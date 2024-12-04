@@ -1,4 +1,4 @@
-#include <Servo.h>
+#include <ESP32Servo.h>
 
 
 
@@ -23,21 +23,21 @@ void setup()
 {
 
   // Attach servos to Arduino Pins
-  ServoFLP.attach(13);
-  ServoFLL.attach(12);
-  ServoFLT.attach(11);
+  ServoFLP.attach(17);
+  ServoFLL.attach(16);
+  ServoFLT.attach(4);
   
-  ServoBLP.attach(4);
-  ServoBLL.attach(3);
-  ServoBLT.attach(2);
+  ServoBLP.attach(5);
+  ServoBLL.attach(18);
+  ServoBLT.attach(19);
   
-  ServoBRP.attach(7);
-  ServoBRL.attach(6);
-  ServoBRT.attach(5);
+  ServoBRP.attach(26);
+  ServoBRL.attach(25);
+  ServoBRT.attach(33);
   
-  ServoFRP.attach(10);
-  ServoFRL.attach(9);
-  ServoFRT.attach(8);
+  ServoFRP.attach(27);
+  ServoFRL.attach(14);
+  ServoFRT.attach(12);
   
   ServoFLP.write(90);
   ServoFLL.write(90);
@@ -55,13 +55,107 @@ void setup()
 
 // Define the delay between function calls (in milliseconds)
 const unsigned long FUNCTION_DELAY = 2000; // 2 seconds
-const unsigned long t = 2;
-const unsigned long tt = 5;
+const unsigned long t = 5;
+const unsigned long tt = 7;
+
+void stand_up(){
+    // Move the pivot servo from 90 - 45 FLP BRP
+    for (int angle = 90; angle >= 45; angle --) {
+    ServoBRP.write(angle);
+    ServoFLP.write(angle);
+    delay(tt);
+  }
+      // Move the pivot servo from 90 - 135 FRP BLP
+    for (int angle = 90; angle <= 135; angle ++) {
+    ServoBLP.write(angle);
+    ServoFRP.write(angle);
+    delay(tt);
+  }
+    // Move the lift servo from 90 to 20 - BLL FRL
+  for (int angle = 90; angle >= 20; angle --) {
+    ServoBLL.write(angle);
+    ServoFRL.write(angle);
+    delay(tt);
+  }
+    // Move the lift servo from 90 to 110 - BRL FLL
+  for (int angle = 90; angle <= 110; angle ++) {
+    ServoBRL.write(angle);
+    ServoFLL.write(angle);
+    delay(tt);
+  }
+  delay(1000);
+      // Move the Tibia servo from 90 to 20 - BLT FRT
+  for (int angle = 90; angle >= 0; angle --) {
+    ServoBLT.write(angle);
+    ServoFRT.write(angle);
+    delay(tt);
+  }
+    // Move the Tibia servo from 90 to 110 - BRT FLT
+  for (int angle = 90; angle <= 180; angle ++) {
+    ServoBRT.write(angle);
+    ServoFLT.write(angle);
+    delay(tt);
+  }
+}
+
+
+void say_hello(){
+    // Move the pivot servo from 90 - 45 FLP BRP
+    for (int angle = 90; angle >= 45; angle -= 2) {
+    ServoBRP.write(angle);
+    ServoFLP.write(angle);
+    delay(tt);
+  }
+      // Move the pivot servo from 90 - 135 FRP BLP
+    for (int angle = 90; angle <= 135; angle += 2) {
+    ServoBLP.write(angle);
+    ServoFRP.write(angle);
+    delay(tt);
+  }
+    // Move the lift servo from 90 to 20 - BLL FRL
+  for (int angle = 90; angle >= 20; angle -= 2) {
+    ServoBLL.write(angle);
+    ServoFRL.write(angle);
+    delay(tt);
+  }
+    // Move the lift servo from 90 to 110 - BRL FLL
+  for (int angle = 90; angle <= 110; angle += 2) {
+    ServoBRL.write(angle);
+    ServoFLL.write(angle);
+    delay(tt);
+  }
+  delay(1000);
+      // Move the Tibia servo from 90 to 20 - BLT FRT
+  for (int angle = 90; angle >= 0; angle -= 2) {
+    ServoBLT.write(angle);
+    ServoFRT.write(angle);
+    delay(tt);
+  }
+    // Move the Tibia servo from 90 to 110 - BRT FLT
+  for (int angle = 90; angle <= 180; angle += 2) {
+    ServoBRT.write(angle);
+    ServoFLT.write(angle);
+    delay(tt);
+  }
+}
+
+
+
+
+
+
+
+
 
 void moveLeg_Left_Forward(Servo& liftServo, Servo& pivotServo , Servo& oppositePivotServo)
 {
-  // Move the lift servo from 90 to 180
-  for (int angle = 90; angle <= 180; angle += 2) {
+  // Move the lift servo from 90 to 20 - BLL FRL
+  for (int angle = 90; angle >= 20; angle -= 2) {
+    liftServo.write(angle);
+    delay(tt);
+  }
+    // Move the lift servo from 90 to 110 - BRL FLL
+  for (int angle = 90; angle <= 110; angle += 2) {
     liftServo.write(angle);
     delay(tt);
   }
@@ -391,7 +485,14 @@ void pushup(){
 */
                            
           // Move Spider Robot Forward logic
-void loop()
+void loop(){
+
+  delay(10000);
+  center_servos();
+  stand_up();
+  delay(100000000000);
+
+/*
 {
    //Move Forward 10 step 
   for (int i = 0; i < 10; i++) {
@@ -433,5 +534,6 @@ void loop()
   center_servos();
   delay(FUNCTION_DELAY);
   */
+  
 }
 
