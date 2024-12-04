@@ -1,23 +1,25 @@
 #include <ESP32Servo.h>
 
+Servo ServoBLP; // Back Left Pivot Servo (backwards) (135)
+Servo ServoBLL; // Back Left Lift Servo (down) (70) 
+Servo ServoBLT; // Back Left Tibia Servo (up) (0)
 
+Servo ServoBRP; // Back Right Pivot Servo (forwards) (45)
+Servo ServoBRL; // Back Right Lift Servo (up) (110) 
+Servo ServoBRT; // Back Right Tibia Servo (down) (180)
 
+Servo ServoFRP; // Front Right Pivot Servo (forwards) (135)
+Servo ServoFRL; // Front Right Lift Servo (down) (70)
+Servo ServoFRT; // Front Right Tibia Servo (up) (0)
 
-Servo ServoBLP; // Back Left Pivot Servo
-Servo ServoBLL; // Back Left Lift Servo
-Servo ServoBLT; // Back Left Tibia Servo
+Servo ServoFLP; // Front Left Pivot Servo (backwards) (45)
+Servo ServoFLL; // Front Left Lift Servo (up) (110)
+Servo ServoFLT; // Front Left Tibia Servo (down) (180)
 
-Servo ServoBRP; // Back Right Pivot Servo
-Servo ServoBRL; // Back Right Lift Servo
-Servo ServoBRT; // Back Right Tibia Servo
-
-Servo ServoFRP; // Front Right Pivot Servo
-Servo ServoFRL; // Front Right Lift Servo
-Servo ServoFRT; // Front Right Tibia Servo
-
-Servo ServoFLP; // Front Left Pivot Servo
-Servo ServoFLL; // Front Left Lift Servo
-Servo ServoFLT; // Front Left Tibia Servo
+//12, 14, 27 FL (FR)
+//26, 25, 33 BL (BR)
+//4, 16, 17 FR (FL)
+//5, 18, 19 BR (BL)
 
 void setup()
 {
