@@ -150,14 +150,14 @@ void center_servos() {
 
   ServoBRL.write(90);
   delay(500);
-  ServoFLL.write(85);
+  ServoFLL.write(90);
   delay(500);
   ServoFRL.write(90);
   delay(500);
   ServoBLL.write(90);
   delay(500);
 
-  ServoBRP.write(95);
+  ServoBRP.write(90);
   delay(500);
   ServoFRP.write(90);
   delay(500);
