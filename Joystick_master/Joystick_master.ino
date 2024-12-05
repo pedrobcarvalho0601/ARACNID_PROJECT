@@ -7,9 +7,6 @@
 
 void setup() {
   Serial.begin(115200);
-  //Serial.begin(9600);
-  //SerialBT.begin("ESP32_Master"); // Name of the master device
-  //Serial.println("The device started, now you can pair it with Bluetooth!");
 
   pinMode(pinXAxis, INPUT);
   pinMode(pinYAxis, INPUT);
@@ -26,23 +23,19 @@ void loop() {
   // Map joystick values to actions
   if (yValue < 100) {
     Serial.println("FORWARDS");
-    //SerialBT.println("FORWARDS");
     delay(100);
   }
   if (yValue > 900) {
     Serial.println("BACKWARDS");
-    //SerialBT.println("BACKWARDS");
     delay(100);
   }
 
   if (xValue < 100) { 
     Serial.println("RIGHT");
-    //SerialBT.println("RIGHT");
     delay(100);
   }
   if (xValue > 900) { 
     Serial.println("LEFT");
-    //SerialBT.println("LEFT");
     delay(100);
   }
 
