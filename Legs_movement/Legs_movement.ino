@@ -1,5 +1,3 @@
- 
-// Include Libraries
 #include <esp_now.h>
 #include <WiFi.h>
 #include <ESP32Servo.h>
@@ -196,14 +194,14 @@ void center_servos() {
 
 void loop() {
 
-  if(mydata.d==true && finish == false){
+  if(myData.d==true && finish == false){
   delay(1000);
   center_servos();
   delay(2000);
   stand_up_without_for();
   finish=true;
   }
-  if(mydata.d==false && finish==true){
+  if(myData.d==false && finish==true){
   delay(1000);
   center_servos();
   delay(2000);
