@@ -83,47 +83,6 @@ const unsigned long FUNCTION_DELAY = 2000;  // 2 seconds
 const unsigned long t = 5;
 const unsigned long tt = 7;
 
-/*
-void stand_up() {
-  // Move the pivot servo from 90 - 45 FLP BRP
-  for (int angle = 90; angle >= 45; angle--) {
-    ServoBRP.write(angle);
-    ServoFLP.write(angle);
-    delay(tt);
-  }
-  // Move the pivot servo from 90 - 135 FRP BLP
-  for (int angle = 90; angle <= 135; angle++) {
-    ServoBLP.write(angle);
-    ServoFRP.write(angle);
-    delay(tt);
-  }
-  // Move the lift servo from 90 to 20 - BLL FRL
-  for (int angle = 90; angle >= 20; angle--) {
-    ServoBLL.write(angle);
-    ServoFRL.write(angle);
-    delay(tt);
-  }
-  // Move the lift servo from 90 to 110 - BRL FLL
-  for (int angle = 90; angle <= 110; angle++) {
-    ServoBRL.write(angle);
-    ServoFLL.write(angle);
-    delay(tt);
-  }
-  delay(1000);
-  // Move the Tibia servo from 90 to 20 - BLT FRT
-  for (int angle = 90; angle >= 0; angle--) {
-    ServoBLT.write(angle);
-    ServoFRT.write(angle);
-    delay(tt);
-  }
-  // Move the Tibia servo from 90 to 110 - BRT FLT
-  for (int angle = 90; angle <= 180; angle++) {
-    ServoBRT.write(angle);
-    ServoFLT.write(angle);
-    delay(tt);
-  }
-}
-*/
 void stand_up_without_for() {
   // Move the pivot servo from 90 - 45 FLP BRP
   ServoBRP.write(45);
@@ -194,25 +153,62 @@ void center_servos() {
 
 void loop() {
 
-  if(myData.d==true && finish == false){
+  if(myData.d == true && finish == false){
   delay(1000);
   center_servos();
-  delay(2000);
+  delay(1500);
   stand_up_without_for();
-  finish=true;
+  finish = true;
   }
-  if(myData.d==false && finish==true){
+  if(myData.d == false && finish == true){
   delay(1000);
   center_servos();
   delay(2000);
-  finish=false;
+  finish = false;
   }
+}
+
+
+
 
 /*
-  delay(10000);
-  center_servos();
-  delay(2000);
-  stand_up_without_for();
-  delay(100000000000);
-*/
+void stand_up() {
+  // Move the pivot servo from 90 - 45 FLP BRP
+  for (int angle = 90; angle >= 45; angle--) {
+    ServoBRP.write(angle);
+    ServoFLP.write(angle);
+    delay(tt);
+  }
+  // Move the pivot servo from 90 - 135 FRP BLP
+  for (int angle = 90; angle <= 135; angle++) {
+    ServoBLP.write(angle);
+    ServoFRP.write(angle);
+    delay(tt);
+  }
+  // Move the lift servo from 90 to 20 - BLL FRL
+  for (int angle = 90; angle >= 20; angle--) {
+    ServoBLL.write(angle);
+    ServoFRL.write(angle);
+    delay(tt);
+  }
+  // Move the lift servo from 90 to 110 - BRL FLL
+  for (int angle = 90; angle <= 110; angle++) {
+    ServoBRL.write(angle);
+    ServoFLL.write(angle);
+    delay(tt);
+  }
+  delay(1000);
+  // Move the Tibia servo from 90 to 20 - BLT FRT
+  for (int angle = 90; angle >= 0; angle--) {
+    ServoBLT.write(angle);
+    ServoFRT.write(angle);
+    delay(tt);
+  }
+  // Move the Tibia servo from 90 to 110 - BRT FLT
+  for (int angle = 90; angle <= 180; angle++) {
+    ServoBRT.write(angle);
+    ServoFLT.write(angle);
+    delay(tt);
+  }
 }
+*/
