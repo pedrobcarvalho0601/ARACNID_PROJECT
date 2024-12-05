@@ -43,21 +43,21 @@ void setup() {
   esp_now_register_recv_cb(OnDataRecv);
 
   // Attach servos to Arduino Pins
-  ServoFLP.attach(17);
-  ServoFLL.attach(16);
-  ServoFLT.attach(4);
+  ServoFLP.attach(5);
+  ServoFLL.attach(18);
+  ServoFLT.attach(19);
 
-  ServoBLP.attach(5);
-  ServoBLL.attach(18);
-  ServoBLT.attach(19);
+  ServoBLP.attach(17);
+  ServoBLL.attach(16);
+  ServoBLT.attach(4);
 
-  ServoBRP.attach(26);
-  ServoBRL.attach(25);
-  ServoBRT.attach(33);
+  ServoBRP.attach(27);
+  ServoBRL.attach(14);
+  ServoBRT.attach(12);
 
-  ServoFRP.attach(27);
-  ServoFRL.attach(14);
-  ServoFRT.attach(12);
+  ServoFRP.attach(26);
+  ServoFRL.attach(25);
+  ServoFRT.attach(33);
 
 }
 
@@ -128,14 +128,14 @@ void stand_up() {
 */
 void stand_up_without_for() {
   // Move the pivot servo from 90 - 45 FLP BRP
-  ServoBRP.write(45);
+  ServoBRP.write(90);
   delay(500);
-  ServoFLP.write(45);
+  ServoFLP.write(55);
   delay(500);
   // Move the pivot servo from 90 - 135 FRP BLP
-  ServoBLP.write(135);
+  ServoBLP.write(125);
   delay(500);
-  ServoFRP.write(135);
+  ServoFRP.write(90);
   delay(800);
 
   // Move the lift servo from 90 to 20 - BLL FRL
@@ -161,10 +161,37 @@ void stand_up_without_for() {
   delay(800);
 }
 
+void move_forward(){
+  stand_up_without_for();
+  delay(1000);
+  //first step
+  //low BL
+  ServoBLL.write(80);
+  ServoBLT.write(5);
+  delay(450);
+  //rotate FR
+  ServoFRL.write(65);
+  delay(250);
+  ServoFRP.write(135);
+  delay(300);
+  //rise BL
+  ServoBLL.write(75);
+  ServoBLT.write(0);
+  delay(450);
+
+  //crawl step
+  ServoBRP.write(55);
+  ServoFLP.write(90);
+  ServoBLP.write(135);
+  ServoFRP.write(125);
+  delay(500);
+
+}
+
 void say_hello() {
 }
 
-void center_servos() {
+void center_servos_down() {
 
   ServoFRT.write(90);
   delay(500);
@@ -196,9 +223,16 @@ void center_servos() {
 
 void loop() {
 
+delay(10000);
+center_servos_down();
+delay(1000);
+move_forward();
+delay(100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
+
+/*
   if(mydata.d==true && finish == false){
   delay(1000);
-  center_servos();
+  center_servos_down();
   delay(2000);
   stand_up_without_for();
   finish=true;
@@ -210,11 +244,5 @@ void loop() {
   finish=false;
   }
 
-/*
-  delay(10000);
-  center_servos();
-  delay(2000);
-  stand_up_without_for();
-  delay(100000000000);
 */
 }
