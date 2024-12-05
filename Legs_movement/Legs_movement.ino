@@ -1,3 +1,7 @@
+ 
+// Include Libraries
+#include <esp_now.h>
+#include <WiFi.h>
 #include <ESP32Servo.h>
 
 Servo ServoBLP; // Back Left Pivot Servo (backwards) (135)
@@ -23,6 +27,21 @@ Servo ServoFLT; // Front Left Tibia Servo (down) (180)
 
 void setup() {
 
+ // Set up Serial Monitor
+  Serial.begin(115200);
+  
+  // Set ESP32 as a Wi-Fi Station
+  WiFi.mode(WIFI_STA);
+ 
+  // Initilize ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+  
+  // Register callback function
+  esp_now_register_recv_cb(OnDataRecv);
+
   // Attach servos to Arduino Pins
   ServoFLP.attach(17);
   ServoFLL.attach(16);
@@ -39,27 +58,34 @@ void setup() {
   ServoFRP.attach(27);
   ServoFRL.attach(14);
   ServoFRT.attach(12);
-  /*
-  ServoFLP.write(90);
-  ServoFLL.write(90);
-  ServoFLT.write(90);
-  ServoBLP.write(90);
-  ServoBLL.write(90);
-  ServoBLT.write(90);
-  ServoBRP.write(90);
-  ServoBRL.write(90);
-  ServoBRT.write(90);
-  ServoFRP.write(90);
-  ServoFRL.write(90);
-  ServoFRT.write(90);
-  */
+
 }
+
+typedef struct struct_message {
+  bool d;
+} struct_message;
+ 
+// Create a structured object
+struct_message myData;
+
+bool finish=false;
+ 
+// Callback function executed when data is received
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&myData, incomingData, sizeof(myData));
+  Serial.print("Data received: ");
+  Serial.println(len);
+  Serial.print("Boolean Value: ");
+  Serial.println(myData.d);
+  Serial.println();
+}
+
 // Define the delay between function calls (in milliseconds)
 const unsigned long FUNCTION_DELAY = 2000;  // 2 seconds
 const unsigned long t = 5;
 const unsigned long tt = 7;
 
-
+/*
 void stand_up() {
   // Move the pivot servo from 90 - 45 FLP BRP
   for (int angle = 90; angle >= 45; angle--) {
@@ -99,7 +125,7 @@ void stand_up() {
     delay(tt);
   }
 }
-
+*/
 void stand_up_without_for() {
   // Move the pivot servo from 90 - 45 FLP BRP
   ServoBRP.write(45);
@@ -170,9 +196,25 @@ void center_servos() {
 
 void loop() {
 
+  if(mydata.d==true && finish == false){
+  delay(1000);
+  center_servos();
+  delay(2000);
+  stand_up_without_for();
+  finish=true;
+  }
+  if(mydata.d==false && finish==true){
+  delay(1000);
+  center_servos();
+  delay(2000);
+  finish=false;
+  }
+
+/*
   delay(10000);
   center_servos();
   delay(2000);
   stand_up_without_for();
   delay(100000000000);
+*/
 }
