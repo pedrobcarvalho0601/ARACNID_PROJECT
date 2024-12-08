@@ -75,6 +75,7 @@ void setup() {
 typedef struct struct_message {
   bool d;
   int move;
+  bool start;
 } struct_message;
 
 // Create a structured object
@@ -421,6 +422,34 @@ void move_right(int n) {
 }
 
 void say_hello() {
+  stand_up();
+  delay(300);
+
+  //low BL
+  ServoBLL.write(88);
+  ServoBLT.write(8);
+  delay(350);
+  //rotate FR
+  ServoFRL.write(55);
+  ServoFRT.write(10);
+  delay(250);
+
+  ServoFRP.write(145);
+  delay(300);
+  for(int i=0; i<4; i++){
+  ServoFRT.write(55);
+  delay(150);
+  ServoFRT.write(0);
+  delay(150);
+  } 
+  ServoFRP.write(95);
+  delay(300);
+  ServoFRL.write(80);
+  ServoFRT.write(0);
+  //rise BL
+  ServoBLL.write(80);
+  ServoBLT.write(0);
+  delay(350);
 }
 
 void center_servos_down() {
@@ -456,39 +485,47 @@ void center_servos_down() {
 bool up = false;
 bool finish = false;
 
+void UP_DOWN(){
+  if(myData.start==false){
+  while(myData.start==false){
+    center_servos_down();
+    up=false;
+    delay(200);
+  }
+  }
+  if(myData.start==true){
+    stand_up();
+    up=true;
+    delay(200);
+  }
+}
+
 void loop() {
-
   delay(4000);
-
   //controlo manual
   if (myData.d == true) {
-    if (up == false) {
-      stand_up();
-      up = true;
+    UP_DOWN();
+    if (up == true) {
+        say_hello();
+        delay(700);
       while (myData.d == true) {
         receivejoystick();
+        UP_DOWN();
         delay(500);
       }
     }
   }
   //contorlo automatico
   if (myData.d == false) {
-    delay(100);
+    UP_DOWN();   
     if (up == false) {
-      stand_up();
-      up = true;
-    }
-    while (up == true) {
+    while (myData.d == false) {
       delay(400);
       int distance = measureDistance();
       looking_Path(distance);
       delay(100);
-
-      if (myData.d == true && up == true) {
-        up = false;
-        center_servos_down();
-        finish = false;
-        delay(2000);
+      UP_DOWN();
+      delay(100);
       }
     }
   }

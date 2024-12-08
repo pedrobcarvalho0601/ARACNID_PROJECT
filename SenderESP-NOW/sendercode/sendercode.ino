@@ -3,11 +3,11 @@
 #include <WiFi.h>
 
 #define LED_BUILTIN 33
-#define pinYAxis 15
-#define pinXAxis 2
+#define pinYAxis 32
+#define pinXAxis 35
 
-const int startPin = 25;
-const int modePin = 26;
+const int pinmode = 25;
+const int startpin = 26;
 
 // MAC Address of responder - edit as required
 uint8_t broadcastAddress[] = { 0x08, 0xB6, 0x1F, 0xEF, 0x82, 0x28 };
@@ -18,6 +18,7 @@ bool movementON = false;
 typedef struct struct_message {
   bool d;
   int move;
+  bool start;
 } struct_message;
 
 //forward = 2
@@ -28,7 +29,7 @@ typedef struct struct_message {
 enum STATE_START {
   OFF,
   ON
-} start_state;
+} automatic_state;
 
 // Create a structured object
 struct_message myData;
@@ -55,14 +56,14 @@ void setup() {
   // Set up Serial Monitor
   Serial.begin(115200);
 
-  pinMode(startPin, INPUT);
-  pinMode(modePin, INPUT);
+  pinMode(pinmode, INPUT);
+  pinMode(startpin, INPUT);
 
   pinMode(pinXAxis, INPUT);
   pinMode(pinYAxis, INPUT);
 
-  lastButtonState = digitalRead(startPin);
-  start_state = OFF;
+  lastButtonState = digitalRead(pinmode);
+  automatic_state = OFF;
 
   // Set ESP32 as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -115,7 +116,7 @@ void joystick() {
 }
 
 bool buttonPressed() {
-  int reading = digitalRead(startPin);
+  int reading = digitalRead(pinmode);
   bool pressed = false;
   if (reading != lastButtonState) {
     lastDebounceTime = millis();
@@ -134,24 +135,38 @@ bool buttonPressed() {
 
 
 
+void ONOFF() {
+  int reading = digitalRead(startpin);
+  if (reading == HIGH) {
+    if (myData.start == false) {
+      myData.start = true;  
+    }
+    if (myData.start == true) {
+      myData.start = false;
+    }
+  }
+}
+
 void loop() {
 
-  switch (start_state) {
+  switch (automatic_state) {
     case OFF:
       //movementON = true;
       //getting down
       currentButtonState = buttonPressed();
       if (currentButtonState && movementON == false) {
         currentButtonState = false;
-        start_state = ON;
+        automatic_state = ON;
         myData.d = true;
+        ONOFF();
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
         digitalWrite(LED_BUILTIN, HIGH);
-        while(currentButtonState == false){
+        while (currentButtonState == false) {
           joystick();
           esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
           currentButtonState = buttonPressed();
-          delay(300);
+          ONOFF();
+          delay(500);
         }
       }
       break;
@@ -162,30 +177,16 @@ void loop() {
       currentButtonState = buttonPressed();
       if (currentButtonState && movementON == false) {
         currentButtonState = false;
-        start_state = OFF;
+        automatic_state = OFF;
         myData.d = false;
-        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
         digitalWrite(LED_BUILTIN, OFF);
+        ONOFF();
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
       }
       break;
 
     default:
-      start_state = OFF;
+      automatic_state = OFF;
       break;
   }
-
-  // Invert the boolean value
-  // bool_value = !bool_value;
-
-  // Send message via ESP-NOW
-
-  /*  
-  if (result == ESP_OK) {
-    Serial.println("Sending confirmed");
-  }
-  else {
-    Serial.println("Sending error");
-  }
-  delay(2000);
-  */
 }
