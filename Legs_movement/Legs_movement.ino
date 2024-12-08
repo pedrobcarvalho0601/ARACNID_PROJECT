@@ -27,10 +27,10 @@ Servo ServoFLT;  // Front Left Tibia Servo (down) (180)
 Servo ultrassomservo;
 float distanceD, distanceE, distanceB;
 
-//12, 14, 27 FL (FR)
-//26, 25, 33 BL (BR)
-//4, 16, 17 FR (FL)
-//5, 18, 19 BR (BL)
+//12, 14, 27 FL 
+//26, 25, 33 BL 
+//4, 16, 17 FR 
+//5, 18, 19 BR 
 
 void setup() {
 
