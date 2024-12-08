@@ -486,10 +486,12 @@ bool up = false;
 bool finish = false;
 
 void UP_DOWN(){
+  if(myData.start==false){
   while(myData.start==false){
     center_servos_down();
     up=false;
     delay(200);
+  }
   }
   if(myData.start==true){
     stand_up();
@@ -498,16 +500,14 @@ void UP_DOWN(){
   }
 }
 
-
-
 void loop() {
   delay(4000);
-  say_hello();
-  delay(700);
   //controlo manual
   if (myData.d == true) {
     UP_DOWN();
     if (up == true) {
+        say_hello();
+        delay(700);
       while (myData.d == true) {
         receivejoystick();
         UP_DOWN();
