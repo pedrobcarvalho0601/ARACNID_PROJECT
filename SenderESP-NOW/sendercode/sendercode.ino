@@ -3,8 +3,8 @@
 #include <WiFi.h>
 
 #define LED_BUILTIN 33
-#define pinYAxis 15
-#define pinXAxis 2
+#define pinYAxis 32
+#define pinXAxis 35
 
 const int startPin = 25;
 const int modePin = 26;
