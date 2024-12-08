@@ -52,8 +52,6 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 
 void setup() {
 
-  myData.start=false;
-
   pinMode(LED_BUILTIN, OUTPUT);
 
   // Set up Serial Monitor
