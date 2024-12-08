@@ -39,7 +39,6 @@ unsigned long lastDebounceTime = 0;
 const unsigned long debounceDelay = 50;
 bool currentButtonState = false;
 
-
 // Peer info
 esp_now_peer_info_t peerInfo;
 
