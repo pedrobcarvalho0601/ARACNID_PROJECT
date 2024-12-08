@@ -102,18 +102,17 @@ void joystick() {
     Serial.println("FORWARDS");
     myData.move = 2;
     delay(100);
-  } 
-  if (xValue < 100) {
+  } else if (xValue < 100) {
     Serial.println("RIGHT");
     myData.move = 3;
     delay(100);
-  }
-  if (xValue > 900) {
+  } else if (xValue > 900) {
     Serial.println("LEFT");
     myData.move = 1;
     delay(100);
+  } else {
+    return;
   }
-  delay(100);
 }
 
 bool buttonPressed() {
