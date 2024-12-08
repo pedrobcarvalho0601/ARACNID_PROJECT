@@ -1,24 +1,31 @@
- 
+
 // Include Libraries
 #include <esp_now.h>
 #include <WiFi.h>
 #include <ESP32Servo.h>
 
-Servo ServoBLP; // Back Left Pivot Servo (backwards) (135)
-Servo ServoBLL; // Back Left Lift Servo (down) (70) 
-Servo ServoBLT; // Back Left Tibia Servo (up) (0)
+#define trigPin 23
+#define echoPin 22
+#define SERVO_PIN 2
 
-Servo ServoBRP; // Back Right Pivot Servo (forwards) (45)
-Servo ServoBRL; // Back Right Lift Servo (up) (110) 
-Servo ServoBRT; // Back Right Tibia Servo (down) (180)
+Servo ServoBLP;  // Back Left Pivot Servo (backwards) (135)
+Servo ServoBLL;  // Back Left Lift Servo (down) (70)
+Servo ServoBLT;  // Back Left Tibia Servo (up) (0)
 
-Servo ServoFRP; // Front Right Pivot Servo (forwards) (135)
-Servo ServoFRL; // Front Right Lift Servo (down) (70)
-Servo ServoFRT; // Front Right Tibia Servo (up) (0)
+Servo ServoBRP;  // Back Right Pivot Servo (forwards) (45)
+Servo ServoBRL;  // Back Right Lift Servo (up) (110)
+Servo ServoBRT;  // Back Right Tibia Servo (down) (180)
 
-Servo ServoFLP; // Front Left Pivot Servo (backwards) (45)
-Servo ServoFLL; // Front Left Lift Servo (up) (110)
-Servo ServoFLT; // Front Left Tibia Servo (down) (180)
+Servo ServoFRP;  // Front Right Pivot Servo (forwards) (135)
+Servo ServoFRL;  // Front Right Lift Servo (down) (70)
+Servo ServoFRT;  // Front Right Tibia Servo (up) (0)
+
+Servo ServoFLP;  // Front Left Pivot Servo (backwards) (45)
+Servo ServoFLL;  // Front Left Lift Servo (up) (110)
+Servo ServoFLT;  // Front Left Tibia Servo (down) (180)
+
+Servo ultrassomservo;
+float distanceD, distanceE, distanceB;
 
 //12, 14, 27 FL (FR)
 //26, 25, 33 BL (BR)
@@ -26,7 +33,7 @@ Servo ServoFLT; // Front Left Tibia Servo (down) (180)
 //5, 18, 19 BR (BL)
 
 void setup() {
-
+  /*
  // Set up Serial Monitor
   Serial.begin(115200);
   
@@ -41,7 +48,7 @@ void setup() {
   
   // Register callback function
   esp_now_register_recv_cb(OnDataRecv);
-
+*/
   // Attach servos to Arduino Pins
   ServoFLP.attach(5);
   ServoFLL.attach(18);
@@ -59,8 +66,16 @@ void setup() {
   ServoFRL.attach(25);
   ServoFRT.attach(33);
 
-}
+// --------------------------- sensor -------------------------------//
+  Serial.begin(9600);
+  pinMode(echoPin, INPUT);
+  pinMode(trigPin, OUTPUT);
 
+  ultrassomservo.attach(SERVO_PIN);
+  ultrassomservo.write(90); // Inicializa o servo parado
+
+}
+/*
 typedef struct struct_message {
   bool d;
 } struct_message;
@@ -79,105 +94,111 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Serial.println(myData.d);
   Serial.println();
 }
-
-// Define the delay between function calls (in milliseconds)
-const unsigned long FUNCTION_DELAY = 2000;  // 2 seconds
-const unsigned long t = 5;
-const unsigned long tt = 7;
-
-/*
-void stand_up() {
-  // Move the pivot servo from 90 - 45 FLP BRP
-  for (int angle = 90; angle >= 45; angle--) {
-    ServoBRP.write(angle);
-    ServoFLP.write(angle);
-    delay(tt);
-  }
-  // Move the pivot servo from 90 - 135 FRP BLP
-  for (int angle = 90; angle <= 135; angle++) {
-    ServoBLP.write(angle);
-    ServoFRP.write(angle);
-    delay(tt);
-  }
-  // Move the lift servo from 90 to 20 - BLL FRL
-  for (int angle = 90; angle >= 20; angle--) {
-    ServoBLL.write(angle);
-    ServoFRL.write(angle);
-    delay(tt);
-  }
-  // Move the lift servo from 90 to 110 - BRL FLL
-  for (int angle = 90; angle <= 110; angle++) {
-    ServoBRL.write(angle);
-    ServoFLL.write(angle);
-    delay(tt);
-  }
-  delay(1000);
-  // Move the Tibia servo from 90 to 20 - BLT FRT
-  for (int angle = 90; angle >= 0; angle--) {
-    ServoBLT.write(angle);
-    ServoFRT.write(angle);
-    delay(tt);
-  }
-  // Move the Tibia servo from 90 to 110 - BRT FLT
-  for (int angle = 90; angle <= 180; angle++) {
-    ServoBRT.write(angle);
-    ServoFLT.write(angle);
-    delay(tt);
-  }
-}
 */
-void stand_up_without_for() {
-  // Move the pivot servo from 90 - 45 FLP BRP
-  ServoBRP.write(90);
-  delay(500);
-  ServoFLP.write(55);
-  delay(500);
-  // Move the pivot servo from 90 - 135 FRP BLP
-  ServoBLP.write(125);
-  delay(500);
-  ServoFRP.write(90);
-  delay(800);
 
-  // Move the lift servo from 90 to 20 - BLL FRL
-  ServoBLL.write(75);
-  delay(500);
-  ServoFRL.write(75);
-  delay(500);
-  // Move the lift servo from 90 to 110 - BRL FLL
-  ServoBRL.write(105);
-  delay(500);
-  ServoFLL.write(105);
-  delay(800);
-  
-  // Move the Tibia servo from 90 to 0 - BLT FRT
-  ServoBLT.write(0);
-  delay(500);
-  ServoFRT.write(0);
-  delay(500);
-  // Move the Tibia servo from 90 to 110 - BRT FLT
-  ServoBRT.write(180);
-  delay(500);
-  ServoFLT.write(180);
-  delay(800);
+// Função para medir a distância usando o sensor ultrassônico
+long measureDistance() {
+  long duration, distance;
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration / 58; // Conversão para cm
+  return distance;
 }
 
-void move_forward(){
-  stand_up_without_for();
-  delay(1000);
-  //first step
-  //low BL
+// Função para controlar o servo contínuo com base na distância
+void looking_Path(int distance) {
+  if (distance <= 10) {
+    Serial.println("Distância < 10 cm: Movendo o servo...");
+    
+    // Gira levemente para a direita
+    ultrassomservo.write(0); // Valor menor que 90 para girar à direita
+    delay(2000);
+    distanceD = measureDistance();
+    Serial.print("Distância direita = "); Serial.println(distanceD);
+    // Gira levemente para a esquerda
+    ultrassomservo.write(180); // Valor maior que 90 para girar à esquerda
+    delay(2000);
+    distanceE = measureDistance();
+    Serial.print("Distância esquerda = "); Serial.println(distanceE);
+    ultrassomservo.write(90);
+    delay(2000);
+    Path_choice(distanceD, distanceE);
+  } else {
+    Serial.println("Distância > 10 cm: Servo parado.");
+    ultrassomservo.write(90); // Servo parado
+    move_forward();
+  }
+}
+
+void Path_choice(int distanceD, int distanceE){
+  if(distanceD -3 > distanceE){
+    move_right(2);                                                                                                                    //RETIRAR
+  }if(distanceE -3 > distanceD){
+    move_left(2);                                                                                                                    //RETIRAR
+  }if(distanceD +3 > distanceE && distanceD -3 < distanceE || distanceE +3 > distanceD && distanceE -3 < distanceD){
+    move_right(4);                                                                                                               //RETIRAR
+  }
+}
+
+void stand_up() {
+  //
+  ServoBRP.write(85);
+  delay(300);
+  ServoFLP.write(55);
+  delay(300);
+  ServoBLP.write(125);
+  delay(300);
+  ServoFRP.write(95);
+  delay(300);
+
+  //
   ServoBLL.write(80);
+  delay(300);
+  ServoFRL.write(80);
+  delay(300);
+  ServoBRL.write(100);
+  delay(300);
+  ServoFLL.write(100);
+  delay(300);
+
+  //
+  ServoBLT.write(0);
+  delay(300);
+  ServoBRT.write(180);
+  delay(300);
+  ServoFRT.write(0);
+  delay(300);
+  ServoFLT.write(180);
+  delay(300);
+}
+
+void move_forward() {
+  delay(250);
+  //first step
+
+  //low BL
+  ServoBLL.write(85);
   ServoBLT.write(5);
-  delay(450);
+  delay(350);
   //rotate FR
-  ServoFRL.write(65);
+  ServoFRL.write(60);
+  ServoFRT.write(10);
   delay(250);
   ServoFRP.write(135);
   delay(300);
+  ServoFRL.write(80);
+  ServoFRT.write(0);
+  delay(250);
   //rise BL
-  ServoBLL.write(75);
+  ServoBLL.write(80);
   ServoBLT.write(0);
-  delay(450);
+  delay(350);
 
   //crawl step
   ServoBRP.write(55);
@@ -186,6 +207,213 @@ void move_forward(){
   ServoFRP.write(125);
   delay(500);
 
+  //second step
+  //low FR
+  ServoFRL.write(85);
+  ServoFRT.write(5);
+  delay(350);
+  //rotate BL
+  ServoBLL.write(60);
+  ServoBLT.write(10);
+  delay(250);
+  ServoBLP.write(90);
+  delay(300);
+  ServoBLL.write(80);
+  ServoBLT.write(0);
+  delay(250);
+  //rise FR
+  ServoFRL.write(80);
+  ServoFRT.write(0);
+  delay(350);
+
+  //Third step
+  //low BR
+  ServoBRL.write(95);
+  ServoBRT.write(175);
+  delay(350);
+  //rotate FL
+  ServoFLL.write(120);
+  ServoFLT.write(170);
+  delay(250);
+  ServoFLP.write(45);
+  delay(300);
+  ServoFLL.write(100);
+  ServoFLT.write(180);
+  delay(250);
+  //rise BR
+  ServoBRL.write(100);
+  ServoBRT.write(180);
+  delay(350);
+  //crawl step
+  ServoBRP.write(45);
+  ServoFLP.write(55);
+  ServoBLP.write(125);
+  ServoFRP.write(95);
+  delay(500);
+
+  //quarter step
+  //low FL
+  ServoFLL.write(95);
+  ServoFLT.write(175);
+  delay(350);
+  //rotate BR
+  ServoBRL.write(120);
+  ServoBRT.write(170);
+  delay(250);
+  ServoBRP.write(85);
+  delay(300);
+  ServoBRL.write(100);
+  ServoBRT.write(180);
+  delay(250);
+  //rise FL
+  ServoFLL.write(100);
+  ServoFLT.write(180);
+  delay(350);
+}
+
+//-----------------------------------------------------------------------------//
+
+void move_left(int n) {
+
+  for (int x = 0; x <= n; x++) {
+    delay(250);
+    //first step
+
+    //Lift FR
+    ServoFRL.write(60);
+    ServoFRT.write(10);
+    delay(250);
+    //rotate ALL
+    ServoFLP.write(45);
+    ServoFRP.write(135);
+    ServoBLP.write(105);
+    ServoBRP.write(75);
+    delay(250);
+    //down FR
+    ServoFRL.write(80);
+    ServoFRT.write(0);
+    delay(450);
+
+    //second step
+    //Lift FL
+    ServoFLL.write(120);
+    ServoFLT.write(170);
+    delay(250);
+    //rotate ALL
+    ServoBRP.write(55);
+    ServoFRP.write(125);
+    ServoBLP.write(95);
+    ServoFLP.write(85);
+    delay(250);
+    //down FL
+    ServoFLL.write(100);
+    ServoFLT.write(180);
+    delay(250);
+
+    //Third step
+    //Lift BL
+    ServoBLL.write(60);
+    ServoBLT.write(10);
+    delay(250);
+    //rotate ALL
+    ServoBRP.write(45);
+    ServoFRP.write(105);
+    ServoBLP.write(135);
+    ServoFLP.write(70);
+    delay(250);
+    //down BL
+    ServoBLL.write(80);
+    ServoBLT.write(0);
+    delay(250);
+
+    //quarter step
+    //Lift BR
+    ServoBRL.write(120);
+    ServoBRT.write(10);
+    delay(250);
+    //rotate ALL
+    ServoBRP.write(85);
+    ServoFLP.write(55);
+    ServoBLP.write(125);
+    ServoFRP.write(95);
+    delay(250);
+    //down BR
+    ServoBRL.write(100);
+    ServoBRT.write(180);
+    delay(250);
+  }
+}
+
+//----------------------------------------------------------------------------------//
+void move_right(int n) {
+
+  for (int x = 0; x <= n; x++) {
+    delay(250);
+    //first step
+
+    //Lift BR
+    ServoBRL.write(120);
+    ServoBRT.write(170);
+    delay(250);
+    //rotate ALL
+    ServoBRP.write(45);
+    ServoFRP.write(105);
+    ServoBLP.write(135);
+    ServoFLP.write(70);
+    delay(250);
+    //down BR
+    ServoBRL.write(100);
+    ServoBRT.write(180);
+    delay(450);
+
+    //second step
+    //Lift BL
+    ServoBLL.write(60);
+    ServoBLT.write(10);
+    delay(250);
+    //rotate ALL
+    ServoBRP.write(55);
+    ServoFRP.write(125);
+    ServoBLP.write(95);
+    ServoFLP.write(85);
+    delay(250);
+    //down BL
+    ServoBLL.write(80);
+    ServoBLT.write(0);
+    delay(250);
+
+    //Third step
+    //Lift FL
+    ServoFLL.write(120);
+    ServoFLT.write(170);
+    delay(250);
+    //rotate ALL
+    ServoFLP.write(45);
+    ServoFRP.write(135);
+    ServoBLP.write(105);
+    ServoBRP.write(75);
+    delay(250);
+    //down FL
+    ServoFLL.write(100);
+    ServoFLT.write(180);
+    delay(250);
+
+    //quarter step
+    //Lift FR
+    ServoFRL.write(60);
+    ServoFRT.write(10);
+    delay(250);
+    //rotate ALL
+    ServoFLP.write(55);
+    ServoBRP.write(85);
+    ServoFRP.write(95);
+    ServoBLP.write(125);
+    delay(250);
+    //down FR
+    ServoFRL.write(80);
+    ServoFRT.write(0);
+    delay(250);
+  }
 }
 
 void say_hello() {
@@ -221,15 +449,27 @@ void center_servos_down() {
   delay(500);
 }
 
+
+
 void loop() {
+  bool up = false;
+  delay(2000);
+  if (up == false) {
+    center_servos_down();
+    delay(800);
+    stand_up();
+    up = true;
+  }
+  up = true;
+  while (up == true) {
+    delay(400);
+    int distance = measureDistance(); 
+    Serial.println(distance);
+    looking_Path(distance);
+    delay(100);
+  }
 
-delay(10000);
-center_servos_down();
-delay(1000);
-move_forward();
-delay(100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000);
-
-/*
+  /*
   if(mydata.d==true && finish == false){
   delay(1000);
   center_servos_down();
