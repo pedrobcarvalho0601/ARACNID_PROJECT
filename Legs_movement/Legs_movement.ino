@@ -33,22 +33,20 @@ float distanceD, distanceE, distanceB;
 //5, 18, 19 BR (BL)
 
 void setup() {
-  /*
- // Set up Serial Monitor
+
+  // Set up Serial Monitor
   Serial.begin(115200);
-  
+
   // Set ESP32 as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
- 
+
   // Initilize ESP-NOW
   if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
     return;
   }
-  
   // Register callback function
   esp_now_register_recv_cb(OnDataRecv);
-*/
+
   // Attach servos to Arduino Pins
   ServoFLP.attach(5);
   ServoFLL.attach(18);
@@ -66,35 +64,28 @@ void setup() {
   ServoFRL.attach(25);
   ServoFRT.attach(33);
 
-// --------------------------- sensor -------------------------------//
-  Serial.begin(9600);
+  // --------------------------- sensor -------------------------------//
   pinMode(echoPin, INPUT);
   pinMode(trigPin, OUTPUT);
 
   ultrassomservo.attach(SERVO_PIN);
-  ultrassomservo.write(90); // Inicializa o servo parado
-
+  ultrassomservo.write(90);  // Inicializa o servo parado
 }
-/*
+
 typedef struct struct_message {
   bool d;
+  int move;
 } struct_message;
- 
+
 // Create a structured object
 struct_message myData;
 
-bool finish=false;
- 
+
 // Callback function executed when data is received
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   memcpy(&myData, incomingData, sizeof(myData));
-  Serial.print("Data received: ");
-  Serial.println(len);
-  Serial.print("Boolean Value: ");
-  Serial.println(myData.d);
-  Serial.println();
 }
-*/
+
 
 // Função para medir a distância usando o sensor ultrassônico
 long measureDistance() {
@@ -107,75 +98,88 @@ long measureDistance() {
   digitalWrite(trigPin, LOW);
 
   duration = pulseIn(echoPin, HIGH);
-  distance = duration / 58; // Conversão para cm
+  distance = duration / 58;  // Conversão para cm
   return distance;
 }
 
 // Função para controlar o servo contínuo com base na distância
 void looking_Path(int distance) {
   if (distance <= 10) {
-    Serial.println("Distância < 10 cm: Movendo o servo...");
-    
+
     // Gira levemente para a direita
-    ultrassomservo.write(0); // Valor menor que 90 para girar à direita
+    ultrassomservo.write(0);  // Valor menor que 90 para girar à direita
     delay(2000);
     distanceD = measureDistance();
-    Serial.print("Distância direita = "); Serial.println(distanceD);
     // Gira levemente para a esquerda
-    ultrassomservo.write(180); // Valor maior que 90 para girar à esquerda
+    ultrassomservo.write(180);  // Valor maior que 90 para girar à esquerda
     delay(2000);
     distanceE = measureDistance();
-    Serial.print("Distância esquerda = "); Serial.println(distanceE);
     ultrassomservo.write(90);
     delay(2000);
     Path_choice(distanceD, distanceE);
   } else {
-    Serial.println("Distância > 10 cm: Servo parado.");
-    ultrassomservo.write(90); // Servo parado
+    ultrassomservo.write(90);  // Servo parado
     move_forward();
   }
 }
 
-void Path_choice(int distanceD, int distanceE){
-  if(distanceD -3 > distanceE){
-    move_right(2);                                                                                                                    //RETIRAR
-  }if(distanceE -3 > distanceD){
-    move_left(2);                                                                                                                    //RETIRAR
-  }if(distanceD +3 > distanceE && distanceD -3 < distanceE || distanceE +3 > distanceD && distanceE -3 < distanceD){
-    move_right(4);                                                                                                               //RETIRAR
+void Path_choice(int distanceD, int distanceE) {
+  if (distanceD - 3 > distanceE) {
+    move_right(2);
+  }
+  if (distanceE - 3 > distanceD) {
+    move_left(2);
+  }
+  if (distanceD + 3 > distanceE && distanceD - 3 < distanceE || distanceE + 3 > distanceD && distanceE - 3 < distanceD) {
+    move_right(4);
+  }
+}
+
+void receivejoystick() {
+  if (myData.move == 1) {
+    move_left(2);
+  }
+  if (myData.move == 2) {
+    move_forward();
+  }
+  if (myData.move == 3) {
+    move_right(2);
+  }
+  if (myData.move == 4) {
+
   }
 }
 
 void stand_up() {
   //
   ServoBRP.write(85);
-  delay(300);
+  delay(500);
   ServoFLP.write(55);
-  delay(300);
+  delay(500);
   ServoBLP.write(125);
-  delay(300);
+  delay(500);
   ServoFRP.write(95);
-  delay(300);
+  delay(500);
 
   //
   ServoBLL.write(80);
-  delay(300);
+  delay(500);
   ServoFRL.write(80);
-  delay(300);
+  delay(500);
   ServoBRL.write(100);
-  delay(300);
+  delay(500);
   ServoFLL.write(100);
-  delay(300);
+  delay(500);
 
   //
   ServoBLT.write(0);
-  delay(300);
+  delay(500);
   ServoBRT.write(180);
-  delay(300);
+  delay(500);
   ServoFRT.write(0);
-  delay(300);
+  delay(500);
   ServoFLT.write(180);
-  delay(300);
+  delay(500);
 }
 
 void move_forward() {
@@ -329,7 +333,7 @@ void move_left(int n) {
     //quarter step
     //Lift BR
     ServoBRL.write(120);
-    ServoBRT.write(10);
+    ServoBRT.write(170);
     delay(250);
     //rotate ALL
     ServoBRP.write(85);
@@ -439,50 +443,53 @@ void center_servos_down() {
   ServoBLL.write(90);
   delay(500);
 
-  ServoBRP.write(90);
+  ServoBRP.write(85);
   delay(500);
-  ServoFRP.write(90);
+  ServoFLP.write(55);
   delay(500);
-  ServoBLP.write(90);
+  ServoBLP.write(125);
   delay(500);
-  ServoFLP.write(90);
+  ServoFRP.write(95);
   delay(500);
 }
 
-
+bool up = false;
+bool finish = false;
 
 void loop() {
-  bool up = false;
-  delay(2000);
-  if (up == false) {
-    center_servos_down();
-    delay(800);
-    stand_up();
-    up = true;
+
+  delay(4000);
+
+  //controlo manual
+  if (myData.d == true) {
+    if (up == false) {
+      stand_up();
+      up = true;
+      while (myData.d == true) {
+        receivejoystick();
+        delay(500);
+      }
+    }
   }
-  up = true;
-  while (up == true) {
-    delay(400);
-    int distance = measureDistance(); 
-    Serial.println(distance);
-    looking_Path(distance);
+  //contorlo automatico
+  if (myData.d == false) {
     delay(100);
-  }
+    if (up == false) {
+      stand_up();
+      up = true;
+    }
+    while (up == true) {
+      delay(400);
+      int distance = measureDistance();
+      looking_Path(distance);
+      delay(100);
 
-  /*
-  if(mydata.d==true && finish == false){
-  delay(1000);
-  center_servos_down();
-  delay(2000);
-  stand_up_without_for();
-  finish=true;
+      if (myData.d == true && up == true) {
+        up = false;
+        center_servos_down();
+        finish = false;
+        delay(2000);
+      }
+    }
   }
-  if(mydata.d==false && finish==true){
-  delay(1000);
-  center_servos();
-  delay(2000);
-  finish=false;
-  }
-
-*/
 }

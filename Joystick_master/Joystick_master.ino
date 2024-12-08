@@ -1,9 +1,7 @@
-//#include <BluetoothSerial.h>
 
-#define pinYAxis 34
-#define pinXAxis 35
 
-//BluetoothSerial SerialBT;
+#define pinYAxis 15
+#define pinXAxis 2
 
 void setup() {
   Serial.begin(115200);
@@ -25,11 +23,6 @@ void loop() {
     Serial.println("FORWARDS");
     delay(100);
   }
-  if (yValue > 900) {
-    Serial.println("BACKWARDS");
-    delay(100);
-  }
-
   if (xValue < 100) { 
     Serial.println("RIGHT");
     delay(100);
