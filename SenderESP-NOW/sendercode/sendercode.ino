@@ -178,8 +178,19 @@ void ONOFF() {
 }
 
 void loop() {
-  switch (start_state) {
-    case OFF:
+
+
+
+      switch (automatic_state) {
+        case OFF:
+          currentButtonState = buttonPressed();
+          if (currentButtonState && movementON == false) {
+            currentButtonState = false;
+            automatic_state = ON;
+            myData.d = true;
+
+              switch (start_state) {
+    case OFF2:
       movementON = false;
       currentButtonState2 = buttonPressed2();
       if (currentButtonState2){
@@ -187,40 +198,52 @@ void loop() {
         start_state = ON2;
       }
       break;
+  
+    case ON2:
+      myData.start = true;
 
-    case ON:
-      //enviar info do botão para levantar
+  switch (start_state) {
+    case OFF2:
+      movementON = false;
+      currentButtonState2 = buttonPressed2();
+      if (currentButtonState2){
+        currentButtonState2 = false;
+        start_state = ON2;
+      }
+      break;
+  
+    case ON2:
+      myData.start = true;
+      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
       delay(6000); //mudar conforme o movimento total do levantamento
-      switch (automatic_state) {
-        case OFF:
-          //getting down
-          currentButtonState = buttonPressed();
-          if (currentButtonState && movementON == false) {
-            currentButtonState = false;
-            automatic_state = ON;
-            myData.d = true;
-            ONOFF();
+  }
+
+
+      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
+      delay(6000); //mudar conforme o movimento total do levantamento
+  }
+
             esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
             digitalWrite(LED_BUILTIN, HIGH);
+
             while (currentButtonState == false) {
               joystick();
               esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
               currentButtonState = buttonPressed();
-              ONOFF();
               delay(500);
             }
+
           }
           break;
 
         case ON:
-          //getting up
           currentButtonState = buttonPressed();
           if (currentButtonState && movementON == false) {
             currentButtonState = false;
             automatic_state = OFF;
             myData.d = false;
             digitalWrite(LED_BUILTIN, OFF);
-            ONOFF();
+
             esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
           }
           break;
@@ -230,8 +253,4 @@ void loop() {
           break;
       }
     
-    default:
-      start_state = OFF2;
-      break;
-  }
 }

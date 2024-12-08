@@ -487,11 +487,9 @@ bool finish = false;
 
 void UP_DOWN(){
   if(myData.start==false){
-  while(myData.start==false){
     center_servos_down();
     up=false;
     delay(200);
-  }
   }
   if(myData.start==true){
     stand_up();
