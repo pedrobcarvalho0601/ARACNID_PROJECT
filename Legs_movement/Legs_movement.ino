@@ -27,10 +27,10 @@ Servo ServoFLT;  // Front Left Tibia Servo (down) (180)
 Servo ultrassomservo;
 float distanceD, distanceE, distanceB;
 
-//12, 14, 27 FL 
-//26, 25, 33 BL 
-//4, 16, 17 FR 
-//5, 18, 19 BR 
+//12, 14, 27 FL
+//26, 25, 33 BL
+//4, 16, 17 FR
+//5, 18, 19 BR
 
 void setup() {
 
@@ -124,6 +124,12 @@ void looking_Path(int distance) {
   }
 }
 
+void manualhello(int distance) {
+  if (distance <= 10) {
+    say_hello();
+  }
+}
+
 void Path_choice(int distanceD, int distanceE) {
   if (distanceD - 3 > distanceE) {
     move_right(2);
@@ -147,7 +153,6 @@ void receivejoystick() {
     move_right(2);
   }
   if (myData.move == 4) {
-
   }
 }
 
@@ -436,12 +441,12 @@ void say_hello() {
 
   ServoFRP.write(145);
   delay(300);
-  for(int i=0; i<4; i++){
-  ServoFRT.write(55);
-  delay(150);
-  ServoFRT.write(0);
-  delay(150);
-  } 
+  for (int i = 0; i < 4; i++) {
+    ServoFRT.write(55);
+    delay(150);
+    ServoFRT.write(0);
+    delay(150);
+  }
   ServoFRP.write(95);
   delay(300);
   ServoFRL.write(80);
@@ -485,6 +490,7 @@ void center_servos_down() {
 bool up = false;
 bool finish = false;
 
+/*
 void UP_DOWN(){
   if(myData.start==false){
     center_servos_down();
@@ -497,33 +503,45 @@ void UP_DOWN(){
     delay(200);
   }
 }
+ */
 
 void loop() {
   delay(4000);
+  center_servos_down();
+  delay(500);
+  stand_up();
+  up = true;
+  say_hello();
+  delay(300);
+
   //controlo manual
   if (myData.d == true) {
-    UP_DOWN();
+    if (up == false) {
+      delay(100);
+      stand_up();
+    }
     if (up == true) {
-        say_hello();
-        delay(700);
       while (myData.d == true) {
         receivejoystick();
-        UP_DOWN();
+        delay(400);
+        int distance = measureDistance();
+        manualhello(distance);
         delay(500);
       }
     }
   }
   //contorlo automatico
   if (myData.d == false) {
-    UP_DOWN();   
     if (up == false) {
-    while (myData.d == false) {
-      delay(400);
-      int distance = measureDistance();
-      looking_Path(distance);
       delay(100);
-      UP_DOWN();
-      delay(100);
+      stand_up();
+    }
+    if (up == true) {
+      while (myData.d == false) {
+        delay(400);
+        int distance = measureDistance();
+        looking_Path(distance);
+        delay(100);
       }
     }
   }
