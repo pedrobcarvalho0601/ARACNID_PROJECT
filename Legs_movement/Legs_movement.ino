@@ -1,4 +1,3 @@
-
 // Include Libraries
 #include <esp_now.h>
 #include <WiFi.h>
@@ -156,6 +155,8 @@ void receivejoystick() {
   }
 }
 
+//-----------------------------------------------------------------------------//
+
 void stand_up() {
   //
   ServoBRP.write(85);
@@ -187,6 +188,8 @@ void stand_up() {
   ServoFLT.write(180);
   delay(500);
 }
+
+//-----------------------------------------------------------------------------//
 
 void move_forward() {
   delay(250);
@@ -359,6 +362,7 @@ void move_left(int n) {
 }
 
 //----------------------------------------------------------------------------------//
+
 void move_right(int n) {
 
   for (int x = 0; x <= n; x++) {
