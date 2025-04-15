@@ -151,7 +151,7 @@ void loop() {
           joystick();
           esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
           currentButtonState = buttonPressed();
-          delay(300);
+          delay(550);
         }
       }
       break;

@@ -232,8 +232,8 @@ void move_forward() {
   ServoBLT.write(0);
   delay(250);
   //rise FR
-  ServoFRL.write(80);
   ServoFRT.write(0);
+  ServoFRL.write(80);
   delay(350);
 
   //Third step
@@ -292,13 +292,14 @@ void move_left(int n) {
     //Lift FR
     ServoFRL.write(60);
     ServoFRT.write(10);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoFLP.write(45);
     ServoFRP.write(135);
+      delay(50);
     ServoBLP.write(105);
     ServoBRP.write(75);
-    delay(250);
+    delay(300);
     //down FR
     ServoFRL.write(80);
     ServoFRT.write(0);
@@ -308,49 +309,52 @@ void move_left(int n) {
     //Lift FL
     ServoFLL.write(120);
     ServoFLT.write(170);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoBRP.write(55);
     ServoFRP.write(125);
+      delay(50);
     ServoBLP.write(95);
     ServoFLP.write(85);
-    delay(250);
+    delay(300);
     //down FL
     ServoFLL.write(100);
     ServoFLT.write(180);
-    delay(250);
+    delay(450);
 
     //Third step
     //Lift BL
     ServoBLL.write(60);
     ServoBLT.write(10);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoBRP.write(45);
     ServoFRP.write(105);
+      delay(50);
     ServoBLP.write(135);
     ServoFLP.write(70);
-    delay(250);
+    delay(300);
     //down BL
     ServoBLL.write(80);
     ServoBLT.write(0);
-    delay(250);
+    delay(450);
 
     //quarter step
     //Lift BR
     ServoBRL.write(120);
     ServoBRT.write(170);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoBRP.write(85);
     ServoFLP.write(55);
+      delay(50);
     ServoBLP.write(125);
     ServoFRP.write(95);
-    delay(250);
+    delay(300);
     //down BR
     ServoBRL.write(100);
     ServoBRT.write(180);
-    delay(250);
+    delay(450);
   }
 }
 
@@ -364,13 +368,14 @@ void move_right(int n) {
     //Lift BR
     ServoBRL.write(120);
     ServoBRT.write(170);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoBRP.write(45);
     ServoFRP.write(105);
+      delay(50);
     ServoBLP.write(135);
     ServoFLP.write(70);
-    delay(250);
+    delay(300);
     //down BR
     ServoBRL.write(100);
     ServoBRT.write(180);
@@ -380,49 +385,52 @@ void move_right(int n) {
     //Lift BL
     ServoBLL.write(60);
     ServoBLT.write(10);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoBRP.write(55);
     ServoFRP.write(125);
+      delay(50);
     ServoBLP.write(95);
     ServoFLP.write(85);
-    delay(250);
+    delay(300);
     //down BL
     ServoBLL.write(80);
     ServoBLT.write(0);
-    delay(250);
+    delay(450);
 
     //Third step
     //Lift FL
     ServoFLL.write(120);
     ServoFLT.write(170);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoFLP.write(45);
     ServoFRP.write(135);
+      delay(50);
     ServoBLP.write(105);
     ServoBRP.write(75);
-    delay(250);
+    delay(300);
     //down FL
     ServoFLL.write(100);
     ServoFLT.write(180);
-    delay(250);
+    delay(450);
 
     //quarter step
     //Lift FR
     ServoFRL.write(60);
     ServoFRT.write(10);
-    delay(250);
+    delay(300);
     //rotate ALL
     ServoFLP.write(55);
     ServoBRP.write(85);
+      delay(50);
     ServoFRP.write(95);
     ServoBLP.write(125);
-    delay(250);
+    delay(300);
     //down FR
     ServoFRL.write(80);
     ServoFRT.write(0);
-    delay(250);
+    delay(450);
   }
 }
 
@@ -509,7 +517,6 @@ void loop() {
   delay(4000);
   center_servos_down();
   delay(500);
-  stand_up();
   up = true;
   say_hello();
   delay(300);
